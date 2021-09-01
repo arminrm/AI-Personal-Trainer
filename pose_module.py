@@ -53,19 +53,28 @@ class poseDetector():
 
     def find_angle(self, img, p1, p2, p3, draw=True):
 
+        #p2 should be the point with the angle!!!!
+
         x1, y1 = self.lmList[p1][1:]
         x2, y2 = self.lmList[p2][1:]
         x3, y3 = self.lmList[p3][1:]
 
-        angle = math.degrees(math.atan2(y3-y2, x3-x2) - math.atan2(y2-y1, x2-x1))
+        l_12 = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+        l_13 = math.sqrt((x3 - x1)**2 + (y3 - y1)**2)
+        l_23 = math.sqrt((x3 - x2)**2 + (y3 - y2)**2)
 
-        if angle < 0:
-            angle += 360
+        angle = math.degrees(math.acos((l_12 ** 2 + l_23 **2 - l_13 ** 2) / (2 * l_12 * l_23)))
+
+        #if angle < 0:
+            #angle += 360
+        #elif angle >= 180:
+            #angle = angle - 180  
+
+        cv2.circle(img, (x1, y1), 5, (255, 0, 0), cv2.FILLED)
+        cv2.circle(img, (x2, y2), 5, (255, 0, 0), cv2.FILLED)
+        cv2.circle(img, (x3, y3), 5, (255, 0, 0), cv2.FILLED)
 
         if draw:
-            cv2.circle(img, (x1, y1), 5, (255, 0, 0), cv2.FILLED)
-            cv2.circle(img, (x2, y2), 5, (255, 0, 0), cv2.FILLED)
-            cv2.circle(img, (x3, y3), 5, (255, 0, 0), cv2.FILLED)
             cv2.putText(img, str(int(angle)), (x2 - 50, y2 - 50), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
 
         return angle
@@ -74,7 +83,6 @@ def main():
 
     pTime = 0
     cap = cv2.VideoCapture(0)
-
     detector = poseDetector()
 
     while True:
