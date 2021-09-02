@@ -12,7 +12,7 @@ pTime = 0
 dir = 0
 count = 0
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("C:\\Users\\armin\\Downloads\\pexels-tima-miroshnichenko-5319101.mp4") #, cv2.CAP_DSHOW)
 
 detector = pm.poseDetector()
 
@@ -63,7 +63,7 @@ def bicep_curls(arm='right'):
 
         cv2.imshow("Image", img)
         cv2.waitKey(1)
-        
+
 def shoulder_press():
     
     global width, height, dim, pTime, dir, count, cap, detector
@@ -116,3 +116,57 @@ def shoulder_press():
 
         cv2.imshow("Image", img)
         cv2.waitKey(1)
+
+def lateral_raise():  #combine lateral-raise and shoulder-press
+
+    global width, height, dim, pTime, dir, count, cap, detector
+
+    while True:
+        success, img = cap.read()
+
+        img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA) #error with this when using video
+
+        img = detector.find_pose(img)
+        lmList = detector.find_position(img)
+
+        if len(lmList) != 0:
+            
+            aleft = detector.find_angle(img, 11, 12, 14)
+            aright = detector.find_angle(img, 12, 11, 13)
+
+            aleft_per = np.interp(aleft, (110, 160), (0, 100))
+            aright_per = np.interp(aright, (110, 160), (0, 100))
+
+            fleft = detector.find_angle(img, 11, 13, 15)
+            fright = detector.find_angle(img, 12, 14, 16)
+
+            if fleft >= 155 and fright >= 155:
+                if aleft_per == 100 and aright_per == 100:
+                    if dir == 0:
+                        count+= 0.5
+                        dir = 1
+                if aleft_per == 0 and aright_per == 0:
+                    if dir == 1:
+                        count += 0.5
+                        dir = 0
+            
+            print(count, aleft_per, aright_per)
+
+            #l_fill = np.interp(left_per, (0, 100), (750, 150))
+            #r_fill = np.interp(right_per, (0, 100), (750, 150))
+
+            #cv2.putText(img, f'{str(int(left_per))}%', (1030, 145), cv2.FONT_HERSHEY_PLAIN, 4, (255, 0, 0), 3)
+            #cv2.rectangle(img, (1040, 750), (1115, int(l_fill)), (0, 255, 0), cv2.FILLED)
+            #cv2.rectangle(img, (1040, 150), (1115, 750), (0, 255, 0), 3)
+
+            cv2.putText(img, str(int(count)), (10, 750), cv2.FONT_HERSHEY_PLAIN, 10, (255, 0, 0), 5) 
+
+        cTime = time.time()
+        fps = 1 / (cTime - pTime)
+        pTime = cTime
+
+        cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+
+        cv2.imshow("Image", img)
+        cv2.waitKey(1)
+
