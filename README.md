@@ -4,4 +4,4 @@ Computer vision-based application to perform human pose estimation, detecting pr
 
 <img src="https://img.shields.io/badge/-Python-blue" /> <img src="https://img.shields.io/badge/-OpenCV-green" /> <img src="https://img.shields.io/badge/-MediaPipe-lightgrey" /> 
 
-https://user-images.githubusercontent.com/68967290/147423074-29a3886c-d610-4685-84d2-35587a632e31.mp4
+https://user-images.githubusercontent.com/68967290/147423100-28c1d0c4-3c46-454f-9035-9d4e2083e637.mp4
